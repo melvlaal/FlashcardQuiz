@@ -3,7 +3,7 @@ package com.flashcard.ui;
 import com.flashcard.model.Card;
 import com.flashcard.model.Deck;
 import com.flashcard.service.*;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.util.List;
@@ -13,6 +13,7 @@ import java.util.Scanner;
  * Console-based user interface for the flashcard application
  */
 @Component
+@RequiredArgsConstructor
 public class ConsoleInterface {
 
     private final Scanner scanner;
@@ -20,16 +21,6 @@ public class ConsoleInterface {
     private final CardService cardService;
     private final QuizService quizService;
     private final FileService fileService;
-
-    @Autowired
-    public ConsoleInterface(DeckService deckService, CardService cardService,
-                            QuizService quizService, FileService fileService) {
-        this.scanner = new Scanner(System.in);
-        this.deckService = deckService;
-        this.cardService = cardService;
-        this.quizService = quizService;
-        this.fileService = fileService;
-    }
 
     /**
      * Start the console interface main loop

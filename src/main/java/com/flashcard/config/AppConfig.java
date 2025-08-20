@@ -5,12 +5,17 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-@Configuration
-public class DatabaseConfig {
+import java.util.Random;
+import java.util.Scanner;
 
-    /**
-     * Configure ObjectMapper bean for JSON serialization/deserialization
-     */
+@Configuration
+public class AppConfig {
+
+    @Bean
+    public Random random() {
+        return new Random();
+    }
+
     @Bean
     public ObjectMapper objectMapper() {
         ObjectMapper mapper = new ObjectMapper();
@@ -22,5 +27,10 @@ public class DatabaseConfig {
         mapper.enable(SerializationFeature.INDENT_OUTPUT);
 
         return mapper;
+    }
+
+    @Bean
+    public Scanner scanner() {
+        return new Scanner(System.in);
     }
 }

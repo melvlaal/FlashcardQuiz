@@ -3,28 +3,22 @@ package com.flashcard.service;
 import com.flashcard.model.Card;
 import com.flashcard.model.Deck;
 import com.flashcard.repository.CardRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 /**
  * Service class for card management operations
  */
 @Service
+@RequiredArgsConstructor
 public class CardService {
 
     private final CardRepository cardRepository;
     private final Validator validator;
-
-    @Autowired
-    public CardService(CardRepository cardRepository, Validator validator) {
-        this.cardRepository = cardRepository;
-        this.validator = validator;
-    }
 
     /**
      * Create a new card in the specified deck
@@ -51,13 +45,6 @@ public class CardService {
      */
     public List<Card> getCardsByDeck(Deck deck) {
         return cardRepository.findByDeckOrderByCreatedAtDesc(deck);
-    }
-
-    /**
-     * Find card by ID
-     */
-    public Optional<Card> findCardById(Long id) {
-        return cardRepository.findById(id);
     }
 
     /**
@@ -107,13 +94,6 @@ public class CardService {
      */
     public long getCardCount(Deck deck) {
         return cardRepository.countByDeck(deck);
-    }
-
-    /**
-     * Check if card exists
-     */
-    public boolean cardExists(Long cardId) {
-        return cardRepository.existsById(cardId);
     }
 
     /**

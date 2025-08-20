@@ -2,7 +2,8 @@ package com.flashcard.service;
 
 import com.flashcard.model.Card;
 import com.flashcard.model.Deck;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.Collections;
 import java.util.List;
@@ -12,16 +13,11 @@ import java.util.Random;
  * Service class for quiz functionality and spaced repetition logic
  */
 @Service
+@RequiredArgsConstructor
 public class QuizService {
 
     private final CardService cardService;
     private final Random random;
-
-    @Autowired
-    public QuizService(CardService cardService) {
-        this.cardService = cardService;
-        this.random = new Random();
-    }
 
     /**
      * Start a quiz session with the specified deck
@@ -90,6 +86,7 @@ public class QuizService {
     /**
      * Inner class to hold quiz result
      */
+    @Getter
     public static class QuizResult {
         private final boolean correct;
         private final String correctAnswer;
@@ -102,7 +99,5 @@ public class QuizService {
         }
 
         public boolean isCorrect() { return correct; }
-        public String getCorrectAnswer() { return correctAnswer; }
-        public String getUserAnswer() { return userAnswer; }
     }
 }

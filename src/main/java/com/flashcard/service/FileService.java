@@ -5,7 +5,7 @@ import com.flashcard.model.Card;
 import com.flashcard.model.Deck;
 import com.flashcard.model.dto.CardExportData;
 import com.flashcard.model.dto.DeckExportData;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.io.*;
 import java.nio.file.Files;
@@ -18,18 +18,12 @@ import java.util.Optional;
  * Service class for file operations (JSON and CSV import/export)
  */
 @Service
+@RequiredArgsConstructor
 public class FileService {
 
     private final ObjectMapper objectMapper;
     private final DeckService deckService;
     private final CardService cardService;
-
-    @Autowired
-    public FileService(ObjectMapper objectMapper, DeckService deckService, CardService cardService) {
-        this.objectMapper = objectMapper;
-        this.deckService = deckService;
-        this.cardService = cardService;
-    }
 
     /**
      * Export deck to JSON file
@@ -109,7 +103,7 @@ public class FileService {
                 String question = escapeCsvField(card.getQuestion());
                 String answer = escapeCsvField(card.getAnswer());
 
-                writer.printf("%s,%s",
+                writer.printf("%s,%s%n",
                         question, answer);
             }
         }

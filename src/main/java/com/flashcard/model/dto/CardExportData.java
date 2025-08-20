@@ -3,10 +3,14 @@ package com.flashcard.model.dto;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.flashcard.model.Card;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Data transfer object for card export/import operations
  */
+@Getter
+@Setter
 public class CardExportData {
 
     private final String question;
@@ -25,14 +29,6 @@ public class CardExportData {
     public CardExportData(Card card) {
         this.question = card.getQuestion();
         this.answer = card.getAnswer();
-    }
-
-    public String getQuestion() {
-        return question;
-    }
-
-    public String getAnswer() {
-        return answer;
     }
 
     @Override

@@ -1,21 +1,19 @@
 package com.flashcard.model.dto;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.flashcard.model.Card;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.List;
 
+@Getter
+@Setter
+@AllArgsConstructor
 public class DeckExportData {
 
     private final String name;
     private final List<CardExportData> cards;
-
-    @JsonCreator
-    public DeckExportData(@JsonProperty("name") String name,
-                          @JsonProperty("cards") List<CardExportData> cards) {
-        this.name = name;
-        this.cards = cards;
-    }
 
     /**
      * Static factory method that converts Card entities to CardExportData

@@ -3,6 +3,9 @@ package com.flashcard.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.time.LocalDateTime;
 
 /**
@@ -10,6 +13,8 @@ import java.time.LocalDateTime;
  */
 @Entity
 @Table(name = "cards")
+@Getter
+@Setter
 public class Card {
 
     @Id
@@ -48,22 +53,6 @@ public class Card {
         this(question, answer);
         this.deck = deck;
     }
-
-    // Getters and Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-
-    public String getQuestion() { return question; }
-    public void setQuestion(String question) { this.question = question; }
-
-    public String getAnswer() { return answer; }
-    public void setAnswer(String answer) { this.answer = answer; }
-
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
-
-    public Deck getDeck() { return deck; }
-    public void setDeck(Deck deck) { this.deck = deck; }
 
     @Override
     public String toString() {

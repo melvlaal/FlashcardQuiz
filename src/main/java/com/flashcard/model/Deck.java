@@ -3,6 +3,9 @@ package com.flashcard.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +15,8 @@ import java.util.List;
  */
 @Entity
 @Table(name = "decks")
+@Getter
+@Setter
 public class Deck {
 
     @Id
@@ -39,30 +44,7 @@ public class Deck {
         this.name = name;
     }
 
-    // Getters and Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
-
-    public List<Card> getCards() { return cards; }
-    public void setCards(List<Card> cards) { this.cards = cards; }
-
     // Helper methods
-    public void addCard(Card card) {
-        cards.add(card);
-        card.setDeck(this);
-    }
-
-    public void removeCard(Card card) {
-        cards.remove(card);
-        card.setDeck(null);
-    }
-
     public int getCardCount() {
         return cards.size();
     }

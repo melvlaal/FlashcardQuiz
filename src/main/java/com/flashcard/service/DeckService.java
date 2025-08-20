@@ -2,7 +2,7 @@ package com.flashcard.service;
 
 import com.flashcard.model.Deck;
 import com.flashcard.repository.DeckRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
@@ -14,16 +14,11 @@ import java.util.Set;
  * Service class for deck management operations
  */
 @Service
+@RequiredArgsConstructor
 public class DeckService {
 
     private final DeckRepository deckRepository;
     private final Validator validator;
-
-    @Autowired
-    public DeckService(DeckRepository deckRepository, Validator validator) {
-        this.deckRepository = deckRepository;
-        this.validator = validator;
-    }
 
     /**
      * Create a new deck with validation
@@ -60,13 +55,6 @@ public class DeckService {
     }
 
     /**
-     * Find deck by ID
-     */
-    public Optional<Deck> findDeckById(Long id) {
-        return deckRepository.findById(id);
-    }
-
-    /**
      * Find deck by name (case-insensitive)
      */
     public Optional<Deck> findDeckByName(String name) {
@@ -74,30 +62,6 @@ public class DeckService {
             return Optional.empty();
         }
         return deckRepository.findByNameIgnoreCase(name.trim());
-    }
-
-    /**
-     * Update deck name
-     */
-    public Deck updateDeckName(Long deckId, String newName) {
-        if (newName == null || newName.trim().isEmpty()) {
-            throw new IllegalArgumentException("Deck name cannot be empty");
-        }
-
-        String trimmedName = newName.trim();
-        Deck deck = deckRepository.findById(deckId)
-                .orElseThrow(() -> new IllegalArgumentException("Deck not found with ID: " + deckId));
-
-        // Check if another deck already has this name
-        Optional<Deck> existingDeck = deckRepository.findByNameIgnoreCase(trimmedName);
-        if (existingDeck.isPresent() && !existingDeck.get().getId().equals(deckId)) {
-            throw new IllegalArgumentException("Deck with name '" + trimmedName + "' already exists");
-        }
-
-        deck.setName(trimmedName);
-        validateDeck(deck);
-
-        return deckRepository.save(deck);
     }
 
     /**
