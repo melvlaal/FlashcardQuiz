@@ -4,7 +4,6 @@ import com.flashcard.model.Deck;
 import com.flashcard.repository.DeckRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 import java.util.List;
@@ -15,7 +14,6 @@ import java.util.Set;
  * Service class for deck management operations
  */
 @Service
-@Transactional
 public class DeckService {
 
     private final DeckRepository deckRepository;
@@ -50,7 +48,6 @@ public class DeckService {
     /**
      * Get all decks ordered by creation date
      */
-    @Transactional(readOnly = true)
     public List<Deck> getAllDecks() {
         return deckRepository.findAllByOrderByCreatedAtDesc();
     }
@@ -58,7 +55,6 @@ public class DeckService {
     /**
      * Get decks that contain at least one card
      */
-    @Transactional(readOnly = true)
     public List<Deck> getDecksWithCards() {
         return deckRepository.findDecksWithCards();
     }
@@ -66,7 +62,6 @@ public class DeckService {
     /**
      * Find deck by ID
      */
-    @Transactional(readOnly = true)
     public Optional<Deck> findDeckById(Long id) {
         return deckRepository.findById(id);
     }
@@ -74,7 +69,6 @@ public class DeckService {
     /**
      * Find deck by name (case-insensitive)
      */
-    @Transactional(readOnly = true)
     public Optional<Deck> findDeckByName(String name) {
         if (name == null || name.trim().isEmpty()) {
             return Optional.empty();
@@ -115,22 +109,6 @@ public class DeckService {
             return true;
         }
         return false;
-    }
-
-    /**
-     * Check if deck exists
-     */
-    @Transactional(readOnly = true)
-    public boolean deckExists(Long deckId) {
-        return deckRepository.existsById(deckId);
-    }
-
-    /**
-     * Get total number of decks
-     */
-    @Transactional(readOnly = true)
-    public long getTotalDeckCount() {
-        return deckRepository.count();
     }
 
     /**

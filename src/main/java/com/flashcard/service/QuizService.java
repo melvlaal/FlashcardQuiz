@@ -4,7 +4,6 @@ import com.flashcard.model.Card;
 import com.flashcard.model.Deck;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -13,7 +12,6 @@ import java.util.Random;
  * Service class for quiz functionality and spaced repetition logic
  */
 @Service
-@Transactional
 public class QuizService {
 
     private final CardService cardService;
@@ -29,7 +27,6 @@ public class QuizService {
      * Start a quiz session with the specified deck
      * Returns shuffled list of cards for the quiz
      */
-    @Transactional(readOnly = true)
     public List<Card> startQuizSession(Deck deck) {
         if (deck == null) {
             throw new IllegalArgumentException("Deck cannot be null");
@@ -62,13 +59,6 @@ public class QuizService {
 
         boolean isCorrect = isAnswerCorrect(correctAnswer, providedAnswer);
 
-        // Update card statistics
-        if (isCorrect) {
-            cardService.recordCorrectAnswer(card.getId());
-        } else {
-            cardService.recordIncorrectAnswer(card.getId());
-        }
-
         return new QuizResult(isCorrect, correctAnswer, providedAnswer);
     }
 
@@ -98,48 +88,6 @@ public class QuizService {
     }
 
     /**
-     * Get quiz statistics for a deck
-     */
-    @Transactional(readOnly = true)
-    public QuizStatistics getQuizStatistics(Deck deck) {
-        List<Card> cards = cardService.getCardsByDeck(deck);
-
-        int totalCards = cards.size();
-        int reviewedCards = 0;
-        int correctAnswers = 0;
-        int totalAnswers = 0;
-
-        for (Card card : cards) {
-            if (card.getLastReviewed() != null) {
-                reviewedCards++;
-            }
-            correctAnswers += card.getCorrectCount();
-            totalAnswers += (card.getCorrectCount() + card.getIncorrectCount());
-        }
-
-        double overallAccuracy = totalAnswers > 0 ? (double) correctAnswers / totalAnswers : 0.0;
-
-        return new QuizStatistics(totalCards, reviewedCards, totalAnswers, correctAnswers, overallAccuracy);
-    }
-
-    /**
-     * Get recommended cards for review based on performance
-     */
-    @Transactional(readOnly = true)
-    public List<Card> getRecommendedCardsForReview(Deck deck, int maxCards) {
-        // Priority: unreviewed cards first, then cards with low accuracy
-        List<Card> unreviewedCards = cardService.getUnreviewedCards(deck);
-        List<Card> lowAccuracyCards = cardService.getCardsWithLowAccuracy(deck, 0.6);
-
-        // Combine and limit the results
-        unreviewedCards.addAll(lowAccuracyCards);
-        Collections.shuffle(unreviewedCards, random);
-
-        return unreviewedCards.size() > maxCards ?
-                unreviewedCards.subList(0, maxCards) : unreviewedCards;
-    }
-
-    /**
      * Inner class to hold quiz result
      */
     public static class QuizResult {
@@ -156,34 +104,5 @@ public class QuizService {
         public boolean isCorrect() { return correct; }
         public String getCorrectAnswer() { return correctAnswer; }
         public String getUserAnswer() { return userAnswer; }
-    }
-
-    /**
-     * Inner class to hold quiz statistics
-     */
-    public static class QuizStatistics {
-        private final int totalCards;
-        private final int reviewedCards;
-        private final int totalAnswers;
-        private final int correctAnswers;
-        private final double overallAccuracy;
-
-        public QuizStatistics(int totalCards, int reviewedCards, int totalAnswers,
-                              int correctAnswers, double overallAccuracy) {
-            this.totalCards = totalCards;
-            this.reviewedCards = reviewedCards;
-            this.totalAnswers = totalAnswers;
-            this.correctAnswers = correctAnswers;
-            this.overallAccuracy = overallAccuracy;
-        }
-
-        public int getTotalCards() { return totalCards; }
-        public int getReviewedCards() { return reviewedCards; }
-        public int getUnreviewedCards() { return totalCards - reviewedCards; }
-        public int getTotalAnswers() { return totalAnswers; }
-        public int getCorrectAnswers() { return correctAnswers; }
-        public int getIncorrectAnswers() { return totalAnswers - correctAnswers; }
-        public double getOverallAccuracy() { return overallAccuracy; }
-        public double getReviewProgress() { return totalCards > 0 ? (double) reviewedCards / totalCards : 0.0; }
     }
 }

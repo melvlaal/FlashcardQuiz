@@ -139,15 +139,6 @@ public class ConsoleInterface {
         double percentage = total > 0 ? (double) correct / total * 100 : 0;
         System.out.println("=== QUIZ RESULTS ===");
         System.out.printf("Score: %d/%d (%.1f%%)%n", correct, total, percentage);
-
-        // Show deck statistics
-        QuizService.QuizStatistics stats = quizService.getQuizStatistics(deck);
-        System.out.printf("Deck Progress: %d/%d cards reviewed (%.1f%%)%n",
-                stats.getReviewedCards(), stats.getTotalCards(),
-                stats.getReviewProgress() * 100);
-        System.out.printf("Overall Accuracy: %.1f%% (%d/%d)%n",
-                stats.getOverallAccuracy() * 100,
-                stats.getCorrectAnswers(), stats.getTotalAnswers());
     }
 
     /**
@@ -287,7 +278,7 @@ public class ConsoleInterface {
         String answer = getUserInput("Enter answer: ");
 
         try {
-            Card card = cardService.createCard(question, answer, deck);
+            cardService.createCard(question, answer, deck);
             System.out.println("Card added successfully!");
         } catch (IllegalArgumentException e) {
             System.out.println("Error adding card: " + e.getMessage());
@@ -308,12 +299,9 @@ public class ConsoleInterface {
 
         for (int i = 0; i < cards.size(); i++) {
             Card card = cards.get(i);
-            System.out.printf("\n[%d] ID: %d%n", i + 1, card.getId());
+            System.out.printf("%n[%d] ID: %d%n", i + 1, card.getId());
             System.out.println("Question: " + card.getQuestion());
             System.out.println("Answer: " + card.getAnswer());
-            System.out.printf("Statistics: %d correct, %d incorrect (%.1f%% accuracy)%n",
-                    card.getCorrectCount(), card.getIncorrectCount(),
-                    card.getAccuracyRate() * 100);
         }
     }
 
@@ -397,7 +385,7 @@ public class ConsoleInterface {
 
         for (int i = 0; i < foundCards.size(); i++) {
             Card card = foundCards.get(i);
-            System.out.printf("\n[%d] ID: %d%n", i + 1, card.getId());
+            System.out.printf("%n[%d] ID: %d%n", i + 1, card.getId());
             System.out.println("Question: " + card.getQuestion());
             System.out.println("Answer: " + card.getAnswer());
         }
@@ -543,9 +531,13 @@ public class ConsoleInterface {
         String filePath = getUserInput("Enter CSV file path: ");
         String deckName = getUserInput("Enter name for the new deck: ");
 
-        Deck importedDeck = fileService.importDeckFromCsv(filePath, deckName);
-        System.out.println("Deck '" + importedDeck.getName() + "' imported successfully!");
-        System.out.println("Cards imported: " + cardService.getCardCount(importedDeck));
+        try {
+            Deck importedDeck = fileService.importDeckFromCsv(filePath, deckName);
+            System.out.println("Deck '" + importedDeck.getName() + "' imported successfully!");
+            System.out.println("Cards imported: " + cardService.getCardCount(importedDeck));
+        } catch (IOException e) {
+            System.out.println("Import failed: " + e.getMessage());
+        }
     }
 
     // Helper methods

@@ -31,18 +31,4 @@ public interface CardRepository extends JpaRepository<Card, Long> {
             "(LOWER(c.question) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
             "LOWER(c.answer) LIKE LOWER(CONCAT('%', :keyword, '%')))")
     List<Card> findByDeckAndKeyword(@Param("deck") Deck deck, @Param("keyword") String keyword);
-
-    /**
-     * Find cards that have never been reviewed
-     */
-    @Query("SELECT c FROM Card c WHERE c.deck = :deck AND c.lastReviewed IS NULL")
-    List<Card> findUnreviewedCardsByDeck(@Param("deck") Deck deck);
-
-    /**
-     * Find cards with low accuracy rate (less than specified threshold)
-     */
-    @Query("SELECT c FROM Card c WHERE c.deck = :deck AND " +
-            "(c.correctCount + c.incorrectCount) > 0 AND " +
-            "(CAST(c.correctCount AS double) / (c.correctCount + c.incorrectCount)) < :threshold")
-    List<Card> findCardsWithLowAccuracy(@Param("deck") Deck deck, @Param("threshold") double threshold);
 }

@@ -5,7 +5,6 @@ import com.flashcard.model.Deck;
 import com.flashcard.repository.CardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 import java.util.List;
@@ -16,7 +15,6 @@ import java.util.Set;
  * Service class for card management operations
  */
 @Service
-@Transactional
 public class CardService {
 
     private final CardRepository cardRepository;
@@ -51,7 +49,6 @@ public class CardService {
     /**
      * Get all cards in a deck
      */
-    @Transactional(readOnly = true)
     public List<Card> getCardsByDeck(Deck deck) {
         return cardRepository.findByDeckOrderByCreatedAtDesc(deck);
     }
@@ -59,7 +56,6 @@ public class CardService {
     /**
      * Find card by ID
      */
-    @Transactional(readOnly = true)
     public Optional<Card> findCardById(Long id) {
         return cardRepository.findById(id);
     }
@@ -99,7 +95,6 @@ public class CardService {
     /**
      * Search cards by keyword in question or answer
      */
-    @Transactional(readOnly = true)
     public List<Card> searchCards(Deck deck, String keyword) {
         if (keyword == null || keyword.trim().isEmpty()) {
             return getCardsByDeck(deck);
@@ -108,47 +103,8 @@ public class CardService {
     }
 
     /**
-     * Get cards that have never been reviewed
-     */
-    @Transactional(readOnly = true)
-    public List<Card> getUnreviewedCards(Deck deck) {
-        return cardRepository.findUnreviewedCardsByDeck(deck);
-    }
-
-    /**
-     * Get cards with low accuracy rate
-     */
-    @Transactional(readOnly = true)
-    public List<Card> getCardsWithLowAccuracy(Deck deck, double threshold) {
-        return cardRepository.findCardsWithLowAccuracy(deck, threshold);
-    }
-
-    /**
-     * Record correct answer for a card
-     */
-    public Card recordCorrectAnswer(Long cardId) {
-        Card card = cardRepository.findById(cardId)
-                .orElseThrow(() -> new IllegalArgumentException("Card not found with ID: " + cardId));
-
-        card.incrementCorrectCount();
-        return cardRepository.save(card);
-    }
-
-    /**
-     * Record incorrect answer for a card
-     */
-    public Card recordIncorrectAnswer(Long cardId) {
-        Card card = cardRepository.findById(cardId)
-                .orElseThrow(() -> new IllegalArgumentException("Card not found with ID: " + cardId));
-
-        card.incrementIncorrectCount();
-        return cardRepository.save(card);
-    }
-
-    /**
      * Get total number of cards in a deck
      */
-    @Transactional(readOnly = true)
     public long getCardCount(Deck deck) {
         return cardRepository.countByDeck(deck);
     }
@@ -156,7 +112,6 @@ public class CardService {
     /**
      * Check if card exists
      */
-    @Transactional(readOnly = true)
     public boolean cardExists(Long cardId) {
         return cardRepository.existsById(cardId);
     }

@@ -29,15 +29,6 @@ public class Card {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    @Column(name = "last_reviewed")
-    private LocalDateTime lastReviewed;
-
-    @Column(name = "correct_count")
-    private int correctCount = 0;
-
-    @Column(name = "incorrect_count")
-    private int incorrectCount = 0;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "deck_id", nullable = false)
     private Deck deck;
@@ -71,33 +62,8 @@ public class Card {
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 
-    public LocalDateTime getLastReviewed() { return lastReviewed; }
-    public void setLastReviewed(LocalDateTime lastReviewed) { this.lastReviewed = lastReviewed; }
-
-    public int getCorrectCount() { return correctCount; }
-    public void setCorrectCount(int correctCount) { this.correctCount = correctCount; }
-
-    public int getIncorrectCount() { return incorrectCount; }
-    public void setIncorrectCount(int incorrectCount) { this.incorrectCount = incorrectCount; }
-
     public Deck getDeck() { return deck; }
     public void setDeck(Deck deck) { this.deck = deck; }
-
-    // Helper methods
-    public void incrementCorrectCount() {
-        this.correctCount++;
-        this.lastReviewed = LocalDateTime.now();
-    }
-
-    public void incrementIncorrectCount() {
-        this.incorrectCount++;
-        this.lastReviewed = LocalDateTime.now();
-    }
-
-    public double getAccuracyRate() {
-        int total = correctCount + incorrectCount;
-        return total > 0 ? (double) correctCount / total : 0.0;
-    }
 
     @Override
     public String toString() {
